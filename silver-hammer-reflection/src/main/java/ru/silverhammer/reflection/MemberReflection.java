@@ -31,7 +31,7 @@ import java.lang.reflect.Modifier;
 import java.util.function.Supplier;
 
 abstract class MemberReflection<T extends AccessibleObject & Member> extends AnnotatedReflection<T> {
-	
+
 	public enum AccessType {
 		Public,
 		Protected,
@@ -42,7 +42,7 @@ abstract class MemberReflection<T extends AccessibleObject & Member> extends Ann
 	protected MemberReflection(T member) {
 		super(member);
 	}
-	
+
 	public AccessType getAccessType() {
 		if (Modifier.isPublic(getElement().getModifiers())) {
 			return AccessType.Public;
@@ -59,17 +59,18 @@ abstract class MemberReflection<T extends AccessibleObject & Member> extends Ann
 	public String getName() {
 		return getElement().getName();
 	}
-	
+
 	protected <R> R forceAccess(Supplier<R> supplier) {
-		boolean accessible = getElement().isAccessible();
-		if (!accessible) {
-			getElement().setAccessible(true);
-		}
+		T element = getElement();
+		boolean accessible = element.isAccessible();
 		try {
+			if (!accessible) {
+				element.setAccessible(true);
+			}
 			return supplier.get();
 		} finally {
 			if (!accessible) {
-				getElement().setAccessible(false);
+				element.setAccessible(false);
 			}
 		}
 	}

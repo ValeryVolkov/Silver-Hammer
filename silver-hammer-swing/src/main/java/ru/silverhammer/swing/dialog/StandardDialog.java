@@ -47,9 +47,9 @@ public class StandardDialog extends JDialog implements WindowListener {
 
 	private static final long serialVersionUID = -1928366951191111057L;
 
-	private JScrollPane scroll;
-	private JButton acceptButton;
-	private JButton cancelButton;
+	private final JScrollPane scroll;
+	private final JButton acceptButton;
+	private final JButton cancelButton;
 
 	private boolean accepted;
 	private boolean canAccept = true;
@@ -57,6 +57,47 @@ public class StandardDialog extends JDialog implements WindowListener {
 	
 	public StandardDialog(Window owner) {
 		super(owner);
+		scroll = new JScrollPane();
+		scroll.setBorder(null);
+
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+		mainPanel.add(scroll, BorderLayout.CENTER);
+
+		JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 5, 0));
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+		JPanel stub = new JPanel(new BorderLayout());
+		stub.add(buttonPanel, BorderLayout.EAST);
+
+		mainPanel.add(stub, BorderLayout.SOUTH);
+
+		acceptButton = new JButton("OK");
+		buttonPanel.add(acceptButton);
+		getRootPane().setDefaultButton(acceptButton);
+		acceptButton.addActionListener(e -> accept());
+
+		cancelButton = new JButton("Cancel");
+		buttonPanel.add(cancelButton);
+		cancelButton.addActionListener(e -> cancel());
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "CANCEL");
+		getRootPane().getActionMap().put("CANCEL", new AbstractAction() {
+			private static final long serialVersionUID = -127075625119822228L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancel();
+			}
+		});
+
+		addWindowListener(this);
+
+		if (getOwner() != null) {
+			setLocationRelativeTo(getOwner());
+		}
+		setModalityType(ModalityType.DOCUMENT_MODAL);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	public boolean isAccepted() {
@@ -77,52 +118,6 @@ public class StandardDialog extends JDialog implements WindowListener {
 
 	public void setCancelText(String text) {
 		cancelButton.setText(text);
-	}
-
-	@Override
-	protected void dialogInit() {
-		super.dialogInit();
-		
-		JPanel mainPanel = new JPanel(new BorderLayout());
-        getContentPane().add(mainPanel, BorderLayout.CENTER);
-
-        scroll = new JScrollPane();
-        scroll.setBorder(null);
-		mainPanel.add(scroll, BorderLayout.CENTER);
-
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 5, 0));
-		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		
-		JPanel stub = new JPanel(new BorderLayout());
-		stub.add(buttonPanel, BorderLayout.EAST);
-		
-		mainPanel.add(stub, BorderLayout.SOUTH);
-		
-		acceptButton = new JButton("OK");
-		buttonPanel.add(acceptButton);
-        getRootPane().setDefaultButton(acceptButton);
-        acceptButton.addActionListener(e -> accept());
-
-		cancelButton = new JButton("Cancel");
-		buttonPanel.add(cancelButton);
-        cancelButton.addActionListener(e -> cancel());
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "CANCEL");
-        getRootPane().getActionMap().put("CANCEL", new AbstractAction() {
-			private static final long serialVersionUID = -127075625119822228L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                cancel();
-            }
-        });
-		
-		addWindowListener(this);
-		
-		if (getOwner() != null) {
-			setLocationRelativeTo(getOwner());
-		}
-		setModalityType(ModalityType.DOCUMENT_MODAL);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
 	private void cancel() {

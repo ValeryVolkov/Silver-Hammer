@@ -25,7 +25,6 @@
  */
 package ru.silverhammer.swing.demo;
 
-import ru.silverhammer.core.string.IStringProcessor;
 import ru.silverhammer.core.string.MultilingualStringProcessor;
 import ru.silverhammer.swing.demo.settings.Environment;
 import ru.silverhammer.swing.demo.settings.Settings;
@@ -35,11 +34,11 @@ import ru.silverhammer.swing.dialog.GenerationDialog;
 public class Program {
 
 	public static void main(String... args) throws Exception {
-		Environment env = new Environment();
-		Settings settings = new Settings();
-		User user = new User();
-		IStringProcessor stringProcessor = new MultilingualStringProcessor("messages");
-		GenerationDialog dialog = new GenerationDialog(null, stringProcessor, user, env, settings);
+		var env = new Environment();
+		var settings = new Settings();
+		var user = new User();
+		var stringProcessor = new MultilingualStringProcessor("messages");
+		var dialog = new GenerationDialog(null, stringProcessor, user, env, settings);
 		dialog.setTitle("Silver Hammer Demo");
 		dialog.setVisible(true);
 	}
